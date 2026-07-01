@@ -33,7 +33,7 @@ dotnet run --project ECL3Q.CLI
 
 ## Publications
 
-Paper I (ECL₃^Q formal system): forthcoming — Studia Logica (submitted)
+Paper I (ECL₃^Q formal system): forthcoming — Studia Logica (in preperstion)
 Paper XVII (σ-conflict taxonomy): in preparation
 Preprint: link to be added upon availability (arXiv / PhilArchive)
 
