@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ECL3Q.Taxonomy</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ECL3Q.Core\ECL3Q.Core.csproj" />
+    <ProjectReference Include="..\ECL3Q.Agents\ECL3Q.Agents.csproj" />
+  </ItemGroup>
+</Project>
