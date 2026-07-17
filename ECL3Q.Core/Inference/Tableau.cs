@@ -297,16 +297,39 @@ public class Tableau
 public static class ProofSearch
 {
     /// <summary>
-    /// Returns true iff φ is a K₃-tautology: T under all three-valued assignments.
+    /// Returns true iff φ evaluates to T under all three-valued (T/U/F) assignments.
     /// Sound and complete for propositional K₃.
-    /// NOTE: K₃ has very few tautologies — formulas with → or ↔ almost never qualify
-    /// because U→U=U and U↔U=U (both ≠ T).
+    ///
+    /// META-RESULT (L Research 17, confirmed): For purely Boolean schemas (∧,∨,¬,→,↔
+    /// without ECL₃^Q-specific operators Obs/σ/[do τ]/U-constants), setting all atoms
+    /// to U yields U for every formula — so this method returns false for all purely
+    /// Boolean schemas. IsK3Tautology is non-trivial only for formulas involving
+    /// ECL₃^Q-specific operators where U-propagation can be interrupted.
+    ///
+    /// For the weaker property "never false" use <see cref="IsNeverFalse"/>.
     /// </summary>
     public static bool IsK3Tautology(Formula formula)
     {
         var atoms = formula.Atoms().ToList();
         return EnumerateAssignments(atoms)
             .All(a => EvaluatePropositional(formula, a) == TruthValue.True);
+    }
+
+    /// <summary>
+    /// Returns true iff φ never evaluates to F under any three-valued assignment.
+    /// This is the weak designated-value property for K₃ (value ∈ {T, U} always).
+    ///
+    /// Unlike <see cref="IsK3Tautology"/> (always T), this has non-trivial instances
+    /// in the purely Boolean fragment:
+    ///   p ∨ ¬p  — always T or U, never F  ✓
+    ///   p → p   — always T or U, never F  ✓
+    ///   p ∧ ¬p  — F when p=T or p=F      ✗
+    /// </summary>
+    public static bool IsNeverFalse(Formula formula)
+    {
+        var atoms = formula.Atoms().ToList();
+        return EnumerateAssignments(atoms)
+            .All(a => EvaluatePropositional(formula, a) != TruthValue.False);
     }
 
     /// <summary>Returns true iff φ is classically valid (T under all T/F assignments).</summary>
