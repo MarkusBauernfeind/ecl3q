@@ -135,4 +135,63 @@ public class InferenceTests
                     $"K₃ tautology {f} should also be classically valid");
         }
     }
+
+    // ── IsNeverFalse tests ────────────────────────────────────────────────────
+
+    [Fact]
+    public void IsNeverFalse_LEM_IsNeverFalse()
+    {
+        // p∨¬p: T when p=T or p=F, U when p=U → never F ✓
+        Assert.True(ProofSearch.IsNeverFalse(Or(P, Not(P))));
+    }
+
+    [Fact]
+    public void IsNeverFalse_pImpliesp_IsNeverFalse()
+    {
+        // p→p = max(¬p,p): T when p=T or p=F, U when p=U → never F ✓
+        Assert.True(ProofSearch.IsNeverFalse(Implies(P, P)));
+    }
+
+    [Fact]
+    public void IsNeverFalse_Contradiction_IsNotNeverFalse()
+    {
+        // p∧¬p: F when p=T, F when p=F → IS false ✗
+        Assert.False(ProofSearch.IsNeverFalse(And(P, Not(P))));
+    }
+
+    [Fact]
+    public void IsNeverFalse_pImpliesq_IsNotNeverFalse()
+    {
+        // p→q: F when p=T, q=F ✗
+        Assert.False(ProofSearch.IsNeverFalse(Implies(P, Q)));
+    }
+
+    [Fact]
+    public void IsNeverFalse_StricterThan_IsClassicalTautology()
+    {
+        // Every classical tautology is IsNeverFalse (since T ≠ F).
+        // But IsNeverFalse is weaker: LEM is IsNeverFalse but not IsK3Tautology.
+        var lem = Or(P, Not(P));
+        Assert.True(ProofSearch.IsNeverFalse(lem));
+        Assert.True(ProofSearch.IsClassicalTautology(lem));
+        Assert.False(ProofSearch.IsK3Tautology(lem));  // p=U → U
+    }
+
+    [Fact]
+    public void IsK3Tautology_EmptyForBooleanFragment_MetaResult()
+    {
+        // Meta-result (L Research 17): all-U assignment gives U for any purely Boolean schema.
+        // Therefore IsK3Tautology is empty (returns false) for all Boolean formulas.
+        var booleanSchemas = new Formula[]
+        {
+            Implies(P, P),
+            Or(P, Not(P)),
+            Not(And(P, Not(P))),
+            Iff(Not(Not(P)), P),
+            Implies(And(P, Q), P),
+        };
+        foreach (var f in booleanSchemas)
+            Assert.False(ProofSearch.IsK3Tautology(f),
+                $"K₃-Tautologie-Test: {f} sollte false ergeben (Meta-Resultat L Research 17)");
+    }
 }
